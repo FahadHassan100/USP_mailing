@@ -1,0 +1,255 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Mail\SignupVerification;
+use App\Mail\USPDebtProfile;
+use App\Mail\ClassDefenceForm;
+use App\Mail\USPForm;
+use App\Mail\SignContract;
+use App\Mail\NewClientSignupNotification;
+
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Cache;
+use App\Models\USP_Program;
+
+// use Illuminate\Support\Facades\Http;
+use Illuminate\Http\Request;
+// use Illuminate\Http\Response;
+
+
+class ApiController extends Controller
+{
+    public function testEmail(){
+
+
+        // echo "Removing Cache";
+        // Cache::flush();
+        // exit();
+
+        // $checkUSP = USP_Program::get();
+        // $emailCount = $checkClient->count();
+
+
+        // $response = Http::get('https://newphilanthropy.ca/sign_contract/api/checkUrl');
+
+        // echo $response;
+
+        //echo var_dump($request);
+
+        // echo $emailCount;
+
+        //echo "checking mailing system and Values:".$request['check12Name']." other Value is: ".$request['role'];
+        // return "checking mailing system and Values";
+        // exit();
+
+        $check = "";
+
+        //Mail::to(["fahad_hassan921@hotmail.com", "fahad@justicetrading.com", "fahadhassan921@gmail.com"])->send(new SignupVerification($check));
+        Mail::to("fahadhassan921@gmail.com")->send(new SignupVerification($check));
+        //Mail::to("fahad@justicetrading.com")->send(new SignupVerification($check));
+        
+        echo "mail send";
+
+
+    }
+
+    public function emailUSPProgram(Request $request){
+
+        $check = "";
+        Mail::to("fahadhassan921@gmail.com")->send(new SignupVerification($check));
+        echo "simple mail send";
+        
+        //Mail::to("fahadhassan921@gmail.com")->send(new USPDebtProfile($request));
+
+        //echo $request['firstName'];
+
+    }
+
+    public function testApp(){
+
+        echo "Url is working";
+
+    }
+
+    public function sentVerificationCodeToClient(Request $request){
+
+        //var_dump($request['Client_Email']." -- ".$request['Verification_code']);
+        //var_dump($request['Client_Email']);
+
+        //$VerificationMailParameters = array("ClientEmail"=>$request['Client_Email'], "VerificationCode"=>$request['Verification_code']);
+        Mail::to($request['Client_Email'])->send(new SignupVerification($request['verification_code']));
+
+    }
+
+
+    public function NewClientSignupNotification(Request $request){
+
+        //var_dump($request['Client_Email']." -- ".$request['Verification_code']);
+        //var_dump($request['Client_Email']);
+
+        $newSignupParameters = array("FName"=>$request['FName'], "LName"=>$request['LName'], "Email"=>$request['Email']);
+        Mail::to('cto@justicetrading.com')->send(new NewClientSignupNotification($newSignupParameters));
+
+    }
+
+
+    public function sendMailCDWF(Request $request){
+
+        //$CDWForm = array("FName"=>"Checking", "LName"=>"Testing", "Email"=>"Testing@live.com", "RFD"=>"1,3", "comments"=>"This is checking comment section");
+
+
+        $CDWForm = array("FName"=>$request['FName'], "LName"=>$request['LName'], "Email"=>$request['Email'], "RFD"=>$request['Reason'], "comments"=>$request['Comments']);
+
+        $PassData = [
+            'FromData' => $CDWForm,
+        ];
+
+        //Mail::to("fahadhassan921@gmail.com")->send(new ClassDefenceForm($CDWForm));
+        //Mail::to("rozen.miki@gmail.com")->send(new ClassDefenceForm($CDWForm));
+        Mail::to("cto@justicetrading.com")->send(new ClassDefenceForm($CDWForm));
+        echo "Mail has been send";
+
+
+        //return view('mail_template.ClassDefenceWithdrawal')->with($PassData);
+        
+
+
+
+    }
+
+    public function USPFormSubmit(Request $request){
+
+        
+        
+
+
+        $amount1 = @$request['amount1'] == "" ? NULL : str_replace(',', '', $request['amount1']);
+        $amount2 = @$request['amount2'] == "" ? NULL : str_replace(',', '', $request['amount2']);
+        $amount3 = @$request['amount3'] == "" ? NULL : str_replace(',', '', $request['amount3']);
+        $amount4 = @$request['amount4'] == "" ? NULL : str_replace(',', '', $request['amount4']);
+        $amount5 = @$request['amount5'] == "" ? NULL : str_replace(',', '', $request['amount5']);
+        $amount6 = @$request['amount6'] == "" ? NULL : str_replace(',', '', $request['amount6']);
+        $amount7 = @$request['amount7'] == "" ? NULL : str_replace(',', '', $request['amount7']);
+        $amount8 = @$request['amount8'] == "" ? NULL : str_replace(',', '', $request['amount8']);
+
+
+
+        $USPForm = array(
+            'first_name' => $request['FName'],
+            'last_name' => $request['LName'],
+            'email_address' => $request['email'],
+            'phone' => $request['phone'],
+            'province' => $request['province'],
+            'city' => $request['city'],
+            'address' => $request['address'],
+            'tax_dispute' => $request['tax_dispute'],
+            'notes' => $request['notes'],
+
+            'program1' => $request['program1'],
+            'year1' => $request['year1'],
+            'amount1' => $request['amount1'],
+            'program2' => @$request['program2'],
+            'year2' => @$request['year2'],
+            'amount2' => @$request['amount2'],
+            'program3' => @$request['program3'],
+            'year3' => @$request['year3'],
+            'amount3' => @$request['amount3'],
+            'program4' => @$request['program4'],
+            'year4' => @$request['year4'],
+            'amount4' => @$request['amount4'],
+            'program5' => @$request['program5'],
+            'year5' => @$request['year5'],
+            'amount5' => @$request['amount5'],
+            'program6' => @$request['program6'],
+            'year6' => @$request['year6'],
+            'amount6' => @$request['amount6'],
+            'program7' => @$request['program7'],
+            'year7' => @$request['year7'],
+            'amount7' => @$request['amount7'],
+            'program8' => @$request['program8'],
+            'year8' => @$request['year8'],
+            'amount8' => @$request['amount8'],
+            'Total_amount' => @$request['Total_amount'],
+            'source' => @$request['source'],
+        );
+
+
+
+
+        // $USPForm = array(
+        //     'first_name' => "Check FName",
+        //     'last_name' => "Check LName",
+        //     'email_address' => "Check test12@live.com",
+        //     'phone' => "check 032151321",
+        //     'province' => "check Province",
+        //     'city' => "check City",
+        //     'address' => "check Address",
+        //     'tax_dispute' => "check 18572",
+        //     'notes' => "check Notice",
+
+        //     'program1' => "Program1111",
+        //     'year1' => "Year1111",
+        //     'amount1' => "Amount 111",
+        //     'program2' => "",
+        //     'year2' => "",
+        //     'amount2' => "",
+        //     'program3' => "",
+        //     'year3' => "",
+        //     'amount3' => "",
+        //     'program4' => "",
+        //     'year4' => "",
+        //     'amount4' => "",
+        //     'program5' => "",
+        //     'year5' => "",
+        //     'amount5' => "",
+        //     'program6' => "",
+        //     'year6' => "",
+        //     'amount6' => "",
+        //     'program7' => "",
+        //     'year7' => "",
+        //     'amount7' => "",
+        //     'program8' => "",
+        //     'year8' => "",
+        //     'amount8' => "",
+        //     'Total_amount' => "13584321",
+        // );
+
+        // $PassData = [
+        //     'FromData' => $USPForm,
+        // ];
+
+        // return view('mail_template.USPForm')->with($PassData);
+
+        
+
+        //Mail::to("fahadhassan921@gmail.com")->send(new USPForm($USPForm));
+        //Mail::to("fahad@justicetrading.com")->send(new USPForm($USPForm));
+        Mail::to("cto@justicetrading.com")->send(new USPForm($USPForm));
+        //Mail::to("rozen.miki@gmail.com")->send(new ClassDefenceForm($USPForm));
+        echo "Mail has been send";
+
+
+
+    }
+
+    public function SignContractMail(Request $request){
+
+
+        $toEmail = $request['to_email'];
+        $affiliateEmail = $request['affiliateEmail'];
+
+        Mail::to($toEmail)->cc($affiliateEmail)->bcc('cto@justicetrading.com')->send(new SignContract($request));
+        //echo "this is passing parameter ".$request['Peter'];
+
+    }
+
+
+    public function sendMailSys(Request $request){
+
+        return var_dump($request['FName']);
+
+    }
+
+
+}
